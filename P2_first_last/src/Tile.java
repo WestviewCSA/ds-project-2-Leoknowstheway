@@ -26,4 +26,11 @@ public class Tile {
 	public void setType(char type) {
 		this.type = type;
 	}
+	
+	public boolean isWalkable() {
+        return type == '.' || type == 'C'; // Wolverine can walk on these
+    }
+	
+	
+	
 }

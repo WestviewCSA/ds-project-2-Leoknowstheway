@@ -1,0 +1,17 @@
+
+Design Plan - P2
+Due: 3/12/25 11:59 PM
+
+After reading the specs, start populating
+a list of things you think might have to 
+do to finish this project. 
+
+1) read the specs - understand the problem
+2) Understand map-based input files
+3) Figure out how to implement scanners
+4) brainstorm general methods 
+5) Queue-based approach first in order to read files and implement
+6) Start writing a stack implemetation
+7) Create runtime code to check runtime and that it fits the necessary criteria
+8)Make sure the code finds the most optimal route 
+9) Check for any bugs and any last minute adjustments that need to be made
