@@ -30,7 +30,6 @@ public class Map {
         }
     }
 
-    /** BFS (Queue-Based) - Finds the shortest path to the coin */
     public int findCoinBFS(int startRow, int startCol) {
         Queue<Tile> queue = new LinkedList<>();
         queue.add(map[startRow][startCol]);

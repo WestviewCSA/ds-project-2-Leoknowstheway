@@ -2,15 +2,14 @@ public class Tile {
     private char type;
     private int row, col;
 
+    // Constructor (Fixes the undefined constructor error)
     public Tile(int row, int col, char type) {
         this.row = row;
         this.col = col;
         this.type = type;
     }
 
- 
-
-	public void setType(char type) {
+    public void setType(char type) {
         this.type = type;
     }
 
@@ -35,11 +34,11 @@ public class Tile {
     }
 
     public boolean isWalkable() {
-        return type == '.' || type == 'C' || type == 'W'; // Walkable tiles (path, coin, Wolverine's start)
+        return type == '.' || type == 'C' || type == 'W'; // Walkable tiles (open path, coin, or Wolverine's start)
     }
 
-  
+    @Override
     public String toString() {
-        return null;
+        return "Tile[" + type + " at (" + row + "," + col + ")]";
     }
 }
