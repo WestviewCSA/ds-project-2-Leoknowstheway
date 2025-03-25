@@ -91,7 +91,7 @@ public class Map {
 
 
 
-    public int findCoinDFS(int startRow, int startCol) {
+  public int findCoinDFS(int startRow, int startCol) {
         Stack<Tile> stack = new Stack<>();
         stack.push(map[startRow][startCol]);
         visited[startRow][startCol] = true;
@@ -102,16 +102,16 @@ public class Map {
 
             if (current.getType() == '$') return steps; // Found the coin
 
-            for (int j = 0; j < 4; j++) {
-                int newRow = current.getRow() + dRow[j];
-                int newCol = current.getCol() + dCol[j];
-
+            for (int[] direction : new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } }) {
+                int newRow = current.getRow() + direction[0];
+                int newCol = current.getCol() + direction[1];
                 if (isValidMove(newRow, newCol)) {
                     visited[newRow][newCol] = true;
                     stack.push(map[newRow][newCol]);
+                    steps++;
                 }
             }
-            steps++; // Move to the next step
+            // Move to the next step
         }
         return -1; // No path found
     }
