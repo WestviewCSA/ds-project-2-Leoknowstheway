@@ -22,103 +22,88 @@ public class Map {
 
             for (int j = 0; j < cols; j++) {
                 char type = line.charAt(j);
-                if (type != '#' && type != '.' && type != 'W' && type != 'C') {
+                if (type != '#' && type != '.' && type != 'W' && type != '$') {
                     throw new IllegalMapCharacterException("Illegal character '" + type + "' found at (" + i + "," + j + ")");
                 }
-                map[i][j] = new Tile(i, j, type); // Fixed row and col order
+                map[i][j] = new Tile(i, j, type);
             }
         }
     }
 
-
-    public int findCoinBFS(int startRow, int startCol) {
+    public boolean queueSolve(int startRow, int startCol) {
         Queue<Tile> queue = new LinkedList<>();
         queue.add(map[startRow][startCol]);
         visited[startRow][startCol] = true;
 
         // Store the previous tile to reconstruct the path
-        Tile[][] previous = new Tile[map.length][map[0].length];  
+        Tile[][] previous = new Tile[map.length][map[0].length];
 
-        int steps = 0;
         while (!queue.isEmpty()) {
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                Tile current = queue.poll();
+            Tile current = queue.poll();
 
-                if (current.getType() == 'C') { 
-                    printPath(previous, current, startRow, startCol);
-                    return steps; 
-                }
+            if (current.getType() == '$') {
+                printPath(previous, current, startRow, startCol);
+                return true;
+            }
 
-                for (int j = 0; j < 4; j++) {
-                    int newRow = current.getRow() + dRow[j];
-                    int newCol = current.getCol() + dCol[j];
+            for (int j = 0; j < 4; j++) {
+                int newRow = current.getRow() + dRow[j];
+                int newCol = current.getCol() + dCol[j];
 
-                    if (isValidMove(newRow, newCol)) {
-                        Tile nextTile = map[newRow][newCol];
-                        visited[newRow][newCol] = true;
-                        queue.add(nextTile);
-                        previous[newRow][newCol] = current; // Store parent for path reconstruction
-                    }
+                if (isValidMove(newRow, newCol)) {
+                    Tile nextTile = map[newRow][newCol];
+                    visited[newRow][newCol] = true;
+                    queue.add(nextTile);
+                    previous[newRow][newCol] = current;
                 }
             }
-            steps++;
         }
-        return -1; // No path found
+        return false;
     }
+ // Method to print the path from the start to the coin
+    private void printPath(Tile[][] previous, Tile current, int startRow, int startCol) {
+        Stack<Tile> path = new Stack<>();
 
-
-    private void printPath(Tile[][] previous, Tile coinTile, int startRow, int startCol) {
-        List<Tile> path = new ArrayList<>();
-        Tile current = coinTile;
-
-        // Trace the code
-        while (current != null && !(current.getRow() == startRow && current.getCol() == startCol)) {
-            path.add(current);
+        // Backtrack from the coin to the start
+        while (current != null) {
+            path.push(current);
             current = previous[current.getRow()][current.getCol()];
         }
 
-        path.add(map[startRow][startCol]); // Add start position
-        Collections.reverse(path); // Reverse to get path from start to coin
-
-        // Print path
-        System.out.println("Coordinates :");
-        for (Tile tile : path) {
-            System.out.println("(" + tile.getRow() + ", " + tile.getCol() + ")");
+        // Print the path from start to coin
+        System.out.println("Path to the coin:");
+        while (!path.isEmpty()) {
+            Tile tile = path.pop();
+            System.out.println("Tile: (" + tile.getRow() + ", " + tile.getCol() + ") Type: " + tile.getType());
         }
     }
 
 
-
-
-  public int findCoinDFS(int startRow, int startCol) {
+    public boolean stackSolve(int startRow, int startCol, boolean[][] visited) {
         Stack<Tile> stack = new Stack<>();
         stack.push(map[startRow][startCol]);
         visited[startRow][startCol] = true;
 
-        int steps = 0;
         while (!stack.isEmpty()) {
             Tile current = stack.pop();
 
-            if (current.getType() == '$') return steps; // Found the coin
+            if (current.getType() == '$') return true;
 
-            for (int[] direction : new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } }) {
+            for (int[] direction : new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}) {
                 int newRow = current.getRow() + direction[0];
                 int newCol = current.getCol() + direction[1];
                 if (isValidMove(newRow, newCol)) {
                     visited[newRow][newCol] = true;
                     stack.push(map[newRow][newCol]);
-                    steps++;
                 }
             }
-            // Move to the next step
         }
-        return -1; // No path found
+        return false;
     }
 
     private boolean isValidMove(int r, int c) {
         return r >= 0 && r < rows && c >= 0 && c < cols &&
-               !visited[r][c] && map[r][c].isWalkable();
+                !visited[r][c] && map[r][c].isWalkable();
     }
 
     public Tile findWolverine() throws IncorrectMapFormatException {
@@ -130,12 +115,7 @@ public class Map {
         throw new IncorrectMapFormatException("Wolverine start position not found!");
     }
 
-    public static class IllegalCommandLineInputsException extends Exception {
-        public IllegalCommandLineInputsException(String message) {
-            super(message);
-        }
-    }
-
+    // Exception classes
     public static class IllegalMapCharacterException extends Exception {
         public IllegalMapCharacterException(String message) {
             super(message);
